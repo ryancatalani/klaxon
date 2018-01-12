@@ -28,7 +28,8 @@ Rails.application.routes.draw do
   end
 
   get '/changes/page/:change_id' => 'changes#page', as: :page_change
-  post '/changes/resend/:id' => 'changes#resend', as: :resend_change_notifications
+  post '/changes/resend/:change_id' => 'changes#resend', as: :resend_change_notifications
+  patch '/changes/:change_id' => 'changes#update', as: :change
 
   scope '/embed' do
     get 'inject' => 'embed#inject'
@@ -38,6 +39,7 @@ Rails.application.routes.draw do
   scope '/integrations' do
     get '/' => 'integrations#index', as: :integrations
     resources :slack, as: 'slack_integrations', controller: 'slack_integrations'
+    resources :sqs, as: 'sqs_integrations', controller: 'sqs_integrations'
   end
 
   get '/help' => 'static#help', as: :help
@@ -51,7 +53,8 @@ Rails.application.routes.draw do
     get '/' => 'sessions#new', as: :login
     get '/token' => 'sessions#token', as: :token_session
     post '/' => 'sessions#create', as: :create_session
-    get 'unknown' => 'static#unknown_user', as: :unknown_user
+    get 'unknown' => 'sessions#unknown_user', as: :unknown_user
+    get 'expired/:user_id' => 'sessions#expired_token', as: :expired_token
   end
   post '/logout' => 'sessions#destroy', as: :logout
 
